@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Equation Solver</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 5px;
+        }
+        .form-group button {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <h1>Physics Equation Solver</h1>
+    <form id="equation-form">
+        <div class="form-group">
+            <label for="equation">Choose the equation you are looking for:</label>
+            <select id="equation" name="equation">
+                <option value="impulse">Impulse = Δp = mΔv = m(vf - vi)</option>
+                <option value="force">F = Δp / t</option>
+                <option value="final-velocity">vf = Impulse / m</option>
+                <option value="momentum">Impulse = Δp = mΔv = m(vf - vi)</option>
+               <option value="momentum-conservation">m1vi = m2vf</option>
+                <option value="velocity">v = t/d</option>
+                <option value="time">t = d/v</option>
+                <option value="momentum-conservation-2">m1vi = (m1 + m2)vf</option>
+                <option value="acceleration">a = μ ⋅ g</option>
+                <option value="final-velocity-2">vf^2 = vo^2 + 2 ⋅ a ⋅ d</option>
+                <option value="angle">tan(θ) = opposite side / adjacent side</option>
+                <option value="momentum-conservation-3">ptotal-before = ptotal-after</option>
+                <option value="kinetic-energy">KEsystem-before = KEsystem-after</option>
+                <option value="work">Wfrict = ΔKE</option>
+                <option value="system-momentum">psystem = √(pA^2 + pB^2)</option>
+                <option value="system-velocity">vsystem = psystem / msystem</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="given">What is given?</label>
+            <input type="text" id="given" name="given">
+        </div>
+        <button type="submit">Find Equation</button>
+    </form>
+    <div id="result" class="result"></div>
+    <script>
+        const form = document.getElementById("equation-form");
+        const result = document.getElementById("result");
+
+        const equations = {
+            "impulse": {
+                "variables": ["m", "vf", "vi"],
+                "equation": "Impulse = m * (vf - vi)"
+            },
+            "force": {
+                "variables": ["Δp", "t"],
+                "equation": "F = Δp / t"
+            },
+            "final-velocity": {
+                "variables": ["Impulse", "m"],
+                "equation": "vf = Impulse / m"
+            },
+            "momentum": {
+                "variables": ["m", "Δv"],
+                "equation": "Impulse = m * Δv"
+            },
+            "momentum-conservation": {
+                "variables": ["m1", "vi", "m2", "vf"],
+                "equation": "m1 * vi = m2 * vf"
+            },
+            "velocity": {
+                "variables": ["t", "d"],
+                "equation": "v = t / d"
+            },
+            "time": {
+                "variables": ["d", "v"],
+                "equation": "t = d / v"
+            },
+            "momentum-conservation-2": {
+                "variables": ["m1", "vi", "m1+m2", "vf"],
+                "equation": "m1 * vi = (m1 + m2) * vf"
+            },
+            "acceleration": {
+                "variables": ["μ", "g"],
+                "equation": "a = μ * g"
+            },
+            "final-velocity-2": {
+                "variables": ["vo", "a", "d"],
+                "equation": "vf^2 = vo^2 + 2 * a * d"
+            },
+            "angle": {
+                "variables": ["opposite side", "adjacent side"],
+                "equation": "tan(θ) = opposite side / adjacent side"
+            },
+            "momentum-conservation-3": {
+                "variables": ["ptotal-before", "ptotal-after"],
+                "equation": "ptotal-before = ptotal-after"
+            },
+            "kinetic-energy": {
+                "variables": ["KEsystem-before", "KEsystem-after"],
+                "equation": "KEsystem-before = KEsystem-after"
+            },
+            "work": {
+                "variables": ["ΔKE", "Wfrict"],
+                "equation": "Wfrict = ΔKE"},
+            "system-momentum": {
+                "variables": ["pA", "pB"],
+                "equation": "psystem = √(pA^2 + pB^2)"
+            },
+            "system-velocity": {
+                "variables": ["psystem", "msystem"],
+                "equation": "vsystem = psystem / msystem"
+            }
+        };
+
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const equation = form.elements["equation"].value;
+            const given = form.elements["given"].value;
+            const equationData = equations[equation];
+            const variables = equationData.variables;
+            let missingVariables = variables.filter((variable) => !given.includes(variable));
+            if (missingVariables.length > 0) {
+                result.textContent = `Please provide values for the following variables: ${missingVariables.join(", ")}.`;
+            } else {
+                const values = given.split(",").map((value) => value.trim());
+                const equationValues = {};
+                variables.forEach((variable, index) => {
+                    equationValues[variable] = values[index];
+                });
+                const equationText = equationData.equation;
+                const solvedEquation = equationText.replace(/([a-z]+)/g, (match) => equationValues[match] || match);
+                const answer = eval(solvedEquation);
+                result.textContent = `The answer is: ${answer}`;
+            }
+        });
+    </script>
+</body>
+</html>
